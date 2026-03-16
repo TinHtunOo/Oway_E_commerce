@@ -1,26 +1,54 @@
+import CategoryFilter from "@/components/category-filter";
 import { supabase } from "@/lib/supabase/client";
+import { Category, ProductCard } from "@/types";
 import Image from "next/image";
+import Link from "next/link";
 
-export default async function ProductsPage() {
-  const { data: products, error } = await supabase
+interface PageProps {
+  searchParams: {
+    category?: string;
+  };
+}
+
+export default async function ProductsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const category = params.category;
+  const { data: categoriesdata } = await supabase
+    .from("categories")
+    .select("name, slug");
+
+  let query = supabase
     .from("products")
     .select(
       `
+    id,
+    name,
+    slug,
+    price,
+    stock,
+    description,
+    product_images (
+      url,
+      is_primary
+    ),
+    categories!inner (
       id,
       name,
-      description,
-      price,
-      product_images (
-        url,
-        is_primary
-      ),
-      categories (
-        name
-      )
-    `,
+      slug
+    )
+  `,
     )
     .eq("is_active", true)
     .order("created_at", { ascending: false });
+
+  if (category) {
+    query = query.eq("categories.slug", category);
+  }
+
+  const { data: productsdata, error } = await query;
+
+  const products = productsdata as ProductCard;
+  const categories = categoriesdata as Category;
 
   if (error) {
     console.error(error);
@@ -29,7 +57,10 @@ export default async function ProductsPage() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Products</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Products</h1>
+        <CategoryFilter categories={categories} />
+      </div>
 
       <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table className="w-full text-sm text-left text-gray-600">
@@ -46,14 +77,14 @@ export default async function ProductsPage() {
 
           {/* BODY */}
           <tbody className="divide-y divide-gray-100">
-            {products.length === 0 ? (
+            {products?.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-10 text-gray-400">
                   No products found.
                 </td>
               </tr>
             ) : (
-              products.map((product) => {
+              products?.map((product) => {
                 const primaryImage =
                   product.product_images?.find((img) => img.is_primary) ??
                   product.product_images?.[0];
@@ -66,11 +97,9 @@ export default async function ProductsPage() {
                     {/* IMAGE */}
                     <td className="px-4 py-3">
                       {primaryImage ? (
-                        <Image
+                        <img
                           src={primaryImage.url}
                           alt={product.name}
-                          width={100}
-                          height={100}
                           className="w-12 h-12 rounded-lg object-cover border border-gray-100"
                         />
                       ) : (
@@ -82,7 +111,9 @@ export default async function ProductsPage() {
 
                     {/* NAME */}
                     <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">
-                      {product.name}
+                      <Link href={`/products/${product.slug}`}>
+                        {product.name}
+                      </Link>
                     </td>
 
                     {/* DESCRIPTION */}
