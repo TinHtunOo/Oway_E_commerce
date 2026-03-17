@@ -1,3 +1,4 @@
+import AddToCartButton from "@/components/add-to-cart-button";
 import { supabase } from "@/lib/supabase/client";
 import { ProductDetail } from "@/types";
 import Image from "next/image";
@@ -79,9 +80,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <p className="text-gray-700">{product.description}</p>
 
           {/* Add to Cart Button */}
-          <button className="mt-4 w-fit rounded-md bg-black px-6 py-3 text-sm font-medium text-white hover:bg-gray-800">
-            Add to Cart
-          </button>
+          <AddToCartButton productId={product.id} />
         </div>
       </div>
     </div>
