@@ -1,13 +1,36 @@
 "use client";
 
+import { supabase } from "@/lib/supabase/client";
 import { useCartStore } from "@/store/cartStore";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const [isLogin, setIsLogin] = useState<boolean | null>(null);
   const count = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0),
   );
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setIsLogin(!!data.user);
+    };
+
+    getUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setIsLogin(!!session?.user);
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <nav className="w-full border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -29,6 +52,13 @@ export default function Navbar() {
             className="text-sm font-medium text-gray-700 hover:text-black"
           >
             Products
+          </Link>
+
+          <Link
+            href={isLogin ? "/account" : "/login"}
+            className="text-sm font-medium text-gray-700 hover:text-black"
+          >
+            {isLogin ? "Account" : "Login"}
           </Link>
 
           <Link
