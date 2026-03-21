@@ -1,59 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCartStore } from "@/store/cartStore";
-import { supabase } from "@/lib/supabase/client";
+import { useCart } from "@/hooks/useCart";
 
 export default function CartPage() {
-  const cartItems = useCartStore((state) => state.items);
-  const { removeItem, increaseQty, decreaseQty } = useCartStore();
+  const { items, total, increaseQty, decreaseQty, removeItem, loading } =
+    useCart();
 
-  const [products, setProducts] = useState<any[]>([]);
+  if (loading) return <div className="p-6">Loading...</div>;
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      if (cartItems.length === 0) return;
-
-      const ids = [...new Set(cartItems.map((i) => i.product_id))];
-      const { data } = await supabase
-        .from("products")
-        .select(
-          `
-          id,
-          name,
-          slug,
-          price,
-          stock,
-          product_images (
-            url,
-            is_primary
-          )
-        `,
-        )
-        .in("id", ids);
-
-      setProducts(data || []);
-    };
-
-    fetchProducts();
-  }, [cartItems]);
-
-  const merged = cartItems?.map((item) => {
-    const product = products.find((p) => p.id === item.product_id);
-
-    return {
-      ...item,
-      products: product,
-    };
-  });
-
-  const total = merged.reduce(
-    (sum, item) => sum + (item.products?.price || 0) * item.quantity,
-    0,
-  );
-
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return <div className="p-6">Cart is empty</div>;
   }
 
@@ -62,7 +18,7 @@ export default function CartPage() {
       <h1 className="mb-6">Cart</h1>
 
       <div className="space-y-4">
-        {merged.map((item) => (
+        {items.map((item) => (
           <div
             key={item.product_id}
             className="flex items-center gap-4 border p-4 rounded-xl"

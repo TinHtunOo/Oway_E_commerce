@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/schemas";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import { mergeCartToDB } from "@/lib/cart/helper";
 
 export default function LoginForm() {
   const router = useRouter();
