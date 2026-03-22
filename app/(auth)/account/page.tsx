@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import { mergeCartToDB } from "@/lib/cart/helper";
 
 type Profile = {
   id: string;
@@ -34,11 +33,7 @@ export default function AccountPage() {
       }
 
       setUser(data.user);
-      const merged = localStorage.getItem("cart-merged");
-      if (!merged) {
-        await mergeCartToDB(data.user.id);
-        localStorage.setItem("cart-merged", "true");
-      }
+
       // fetch profile
       const { data: profile } = await supabase
         .from("profiles")
