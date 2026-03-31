@@ -4,31 +4,26 @@ import { CartItem } from "@/types";
 import { supabase } from "@/lib/supabase/client";
 
 // ─── Debounce helper ─────────────────────────────────────────────────────────
-function debounce<T extends (...args: any[]) => void>(fn: T, ms: number) {
+function debounce(fn: (items: CartItem[], userId: string) => void, ms: number) {
   let timer: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
+  return (items: CartItem[], userId: string) => {
     clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), ms);
+    timer = setTimeout(() => fn(items, userId), ms);
   };
 }
 
-// ─── Shared DB writer ────────────────────────────────────────────────────────
-async function pushCartToDb(items: CartItem[]) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
-
+// ─── Shared DB writer ─────────────────────────────────────────────────────────
+async function pushCartToDb(items: CartItem[], userId: string) {
   let { data: cart } = await supabase
     .from("carts")
     .select("id")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (!cart) {
     const { data: newCart } = await supabase
       .from("carts")
-      .insert({ user_id: user.id })
+      .insert({ user_id: userId })
       .select("id")
       .single();
     if (!newCart) return;
@@ -49,14 +44,14 @@ async function pushCartToDb(items: CartItem[]) {
 }
 
 // ─── Debounced version for actions ───────────────────────────────────────────
-const syncToDb = debounce((items: CartItem[]) => {
-  pushCartToDb(items);
+const syncToDb = debounce((items: CartItem[], userId: string) => {
+  pushCartToDb(items, userId);
 }, 800);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type CartStore = {
   items: CartItem[];
-  isLoggedIn: boolean;
+  userId: string | null;
   initCart: () => Promise<void>;
   addItem: (productId: string) => void;
   removeItem: (productId: string) => void;
@@ -70,20 +65,20 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
-      isLoggedIn: false,
+      userId: null,
 
-      // ── Init ───────────────────────────────────────────────────────────────
+      // ── Init ─────────────────────────────────────────────────────────────
       initCart: async () => {
         const {
           data: { user },
         } = await supabase.auth.getUser();
 
         if (!user) {
-          set({ isLoggedIn: false });
+          set({ userId: null });
           return;
         }
 
-        set({ isLoggedIn: true });
+        set({ userId: user.id });
 
         const { data: cart } = await supabase
           .from("carts")
@@ -101,36 +96,43 @@ export const useCartStore = create<CartStore>()(
           dbItems = data || [];
         }
 
-        // merge guest items on top of db items
-        const localItems = get().items;
+        const localItems = get().items.filter(
+          (local) => local.cart_id === "local",
+        );
+
         const merged = [...dbItems];
 
         for (const local of localItems) {
-          const existing = merged.find(
-            (i) => i.product_id === local.product_id,
+          const existingIndex = merged.findIndex(
+            (db) => db.product_id === local.product_id,
           );
-          if (existing) {
-            existing.quantity += local.quantity;
+
+          if (existingIndex !== -1) {
+            // product exists in DB → sum quantities
+            merged[existingIndex] = {
+              ...merged[existingIndex],
+              quantity: merged[existingIndex].quantity + local.quantity,
+            };
           } else {
+            // new product → just add it
             merged.push(local);
           }
         }
 
         set({ items: merged });
-
-        // immediate flush — no debounce on login
-        await pushCartToDb(merged);
+        await pushCartToDb(merged, user.id);
       },
 
-      // ── Actions ────────────────────────────────────────────────────────────
+      // ── Actions ───────────────────────────────────────────────────────────
       addItem: (productId) => {
-        const items = [...get().items];
-        const existing = items.find((i) => i.product_id === productId);
+        const { items, userId } = get();
+        const updated = [...items];
+        const existing = updated.find((i) => i.product_id === productId);
 
         if (existing) {
           existing.quantity += 1;
         } else {
-          items.push({
+          updated.push({
             id: crypto.randomUUID(),
             cart_id: "local",
             product_id: productId,
@@ -139,37 +141,43 @@ export const useCartStore = create<CartStore>()(
           });
         }
 
-        set({ items });
-        if (get().isLoggedIn) syncToDb(items);
+        set({ items: updated });
+        if (userId) syncToDb(updated, userId);
       },
 
       removeItem: (productId) => {
+        const { userId } = get();
         const items = get().items.filter((i) => i.product_id !== productId);
         set({ items });
-        if (get().isLoggedIn) syncToDb(items);
+        if (userId) syncToDb(items, userId);
       },
 
       increaseQty: (productId) => {
+        const { userId } = get();
         const items = get().items.map((i) =>
           i.product_id === productId ? { ...i, quantity: i.quantity + 1 } : i,
         );
         set({ items });
-        if (get().isLoggedIn) syncToDb(items);
+        console.log(userId);
+
+        if (userId) syncToDb(items, userId);
       },
 
       decreaseQty: (productId) => {
+        const { userId } = get();
         const items = get()
           .items.map((i) =>
             i.product_id === productId ? { ...i, quantity: i.quantity - 1 } : i,
           )
           .filter((i) => i.quantity > 0);
         set({ items });
-        if (get().isLoggedIn) syncToDb(items);
+        if (userId) syncToDb(items, userId);
       },
 
       clearCart: () => {
+        const { userId } = get();
         set({ items: [] });
-        if (get().isLoggedIn) syncToDb([]);
+        if (userId) syncToDb([], userId);
       },
     }),
     {
