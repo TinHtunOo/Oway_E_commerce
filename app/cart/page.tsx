@@ -2,11 +2,14 @@
 
 import { useCart } from "@/hooks/useCart";
 import { ProductImage } from "@/types";
+import { Lock } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { items, total, removeItem, increaseQty, decreaseQty } = useCart();
-
+  const { items, total, removeItem, increaseQty, decreaseQty, isLoggedIn } =
+    useCart();
+  const router = useRouter();
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -94,12 +97,23 @@ export default function CartPage() {
       </div>
 
       {/* ── Checkout ────────────────────────────────────────────────────── */}
-      <button
-        onClick={() => {}}
-        className="mt-4 w-full bg-primary text-primary-foreground rounded-xl py-3 font-medium hover:opacity-90 transition"
-      >
-        Checkout
-      </button>
+      {isLoggedIn ? (
+        <button
+          onClick={() => router.push("/checkout")}
+          className="mt-4 w-full bg-primary hover:bg-purple-500 hover:cursor-pointer text-primary-foreground rounded-xl py-3 font-medium hover:opacity-90 transition"
+        >
+          Checkout
+        </button>
+      ) : (
+        <button
+          onClick={() => router.push("/login")}
+          className="mt-4 w-full bg-primary hover:bg-purple-500 hover:cursor-pointer text-primary-foreground rounded-xl py-3 font-medium hover:opacity-90 transition"
+        >
+          <span className=" flex items-center justify-center gap-1">
+            <Lock size={16} /> Checkout
+          </span>
+        </button>
+      )}
     </div>
   );
 }
