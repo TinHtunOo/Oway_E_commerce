@@ -5,6 +5,7 @@ import { useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/hooks/useCart";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
@@ -13,6 +14,8 @@ const stripePromise = loadStripe(
 function SuccessContent() {
   const stripe = useStripe();
   const router = useRouter();
+  const { clearCart } = useCart(); // ✅ call it here
+
   const [status, setStatus] = useState<"loading" | "success" | "failed">(
     "loading",
   );
@@ -31,6 +34,11 @@ function SuccessContent() {
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       setStatus(paymentIntent?.status === "succeeded" ? "success" : "failed");
+      if (paymentIntent?.status === "succeeded") {
+        setStatus("success");
+      } else {
+        setStatus("failed");
+      }
     });
   }, [stripe]);
 

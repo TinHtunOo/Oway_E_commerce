@@ -52,6 +52,8 @@ const syncToDb = debounce((items: CartItem[], userId: string) => {
 type CartStore = {
   items: CartItem[];
   userId: string | null;
+  // add to store state
+  cartId: string | null;
   initCart: () => Promise<void>;
   addItem: (productId: string) => void;
   removeItem: (productId: string) => void;
@@ -66,6 +68,8 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       userId: null,
+      // add to store state
+      cartId: null,
 
       // ── Init ─────────────────────────────────────────────────────────────
       initCart: async () => {
@@ -80,21 +84,31 @@ export const useCartStore = create<CartStore>()(
 
         set({ userId: user.id });
 
-        const { data: cart } = await supabase
+        let cart = await supabase
           .from("carts")
           .select("id")
           .eq("user_id", user.id)
-          .maybeSingle();
+          .maybeSingle()
+          .then(({ data }) => data);
 
-        let dbItems: CartItem[] = [];
-
-        if (cart) {
-          const { data } = await supabase
-            .from("cart_items")
-            .select("*")
-            .eq("cart_id", cart.id);
-          dbItems = data || [];
+        if (!cart) {
+          const { data: newCart } = await supabase
+            .from("carts")
+            .insert({ user_id: user.id })
+            .select("id")
+            .single();
+          cart = newCart;
         }
+
+        if (!cart) return;
+        set({ cartId: cart.id });
+
+        const { data } = await supabase
+          .from("cart_items")
+          .select("*")
+          .eq("cart_id", cart.id);
+
+        const dbItems: CartItem[] = data || [];
 
         const localItems = get().items.filter(
           (local) => local.cart_id === "local",
@@ -108,24 +122,28 @@ export const useCartStore = create<CartStore>()(
           );
 
           if (existingIndex !== -1) {
-            // product exists in DB → sum quantities
             merged[existingIndex] = {
               ...merged[existingIndex],
               quantity: merged[existingIndex].quantity + local.quantity,
             };
           } else {
-            // new product → just add it
             merged.push(local);
           }
         }
 
-        set({ items: merged });
-        await pushCartToDb(merged, user.id);
+        // mark all as synced with real cart_id
+        const synced = merged.map((item) => ({
+          ...item,
+          cart_id: cart!.id,
+        }));
+
+        set({ items: synced });
+        await pushCartToDb(synced, user.id);
       },
 
       // ── Actions ───────────────────────────────────────────────────────────
       addItem: (productId) => {
-        const { items, userId } = get();
+        const { items, userId, cartId } = get();
         const updated = [...items];
         const existing = updated.find((i) => i.product_id === productId);
 
@@ -134,7 +152,7 @@ export const useCartStore = create<CartStore>()(
         } else {
           updated.push({
             id: crypto.randomUUID(),
-            cart_id: "local",
+            cart_id: cartId ?? "local", // ← use real cartId if logged in
             product_id: productId,
             quantity: 1,
             created_at: new Date().toISOString(),

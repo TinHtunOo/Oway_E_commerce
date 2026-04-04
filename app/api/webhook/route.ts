@@ -1,10 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-03-25.dahlia",
 });
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -32,18 +37,24 @@ export async function POST(req: NextRequest) {
         console.error("Missing metadata in payment intent");
         break;
       }
-      const supabase = await createClient();
+      console.log("✅ payment_intent.succeeded fired");
+
+      console.log("orderId", orderId);
+      console.log("userId", userId);
 
       // 1. Update order status to "confirmed"
-      const { error: orderError } = await supabase
+      const { data, error: orderError } = await supabase
         .from("orders")
         .update({
           status: "confirmed", // OrderStatus: pending → confirmed
           updated_at: new Date().toISOString(),
         })
         .eq("id", orderId)
-        .eq("user_id", userId); // safety check — must belong to this user
+        .eq("user_id", userId)
+        .select(); // ✅ add select to see what was updated
 
+      console.log("DB update result:", data);
+      console.log("DB update error:", orderError); // safety check — must belong to this user
       if (orderError) {
         console.error("Failed to update order:", orderError);
         return NextResponse.json(
@@ -88,7 +99,6 @@ export async function POST(req: NextRequest) {
       const { orderId, userId } = paymentIntent.metadata;
 
       if (!orderId || !userId) break;
-      const supabase = await createClient();
 
       // Mark order as cancelled on payment failure
       const { error } = await supabase
