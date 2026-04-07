@@ -14,8 +14,7 @@ const stripePromise = loadStripe(
 function SuccessContent() {
   const stripe = useStripe();
   const router = useRouter();
-  const { clearCart } = useCart(); // ✅ call it here
-
+  const { clearCart } = useCart();
   const [status, setStatus] = useState<"loading" | "success" | "failed">(
     "loading",
   );
@@ -36,11 +35,12 @@ function SuccessContent() {
       setStatus(paymentIntent?.status === "succeeded" ? "success" : "failed");
       if (paymentIntent?.status === "succeeded") {
         setStatus("success");
+        clearCart();
       } else {
         setStatus("failed");
       }
     });
-  }, [stripe]);
+  });
 
   if (status === "loading") return <p>Checking payment...</p>;
   if (status === "success")

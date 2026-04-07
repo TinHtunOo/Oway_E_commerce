@@ -7,8 +7,15 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { items, total, removeItem, increaseQty, decreaseQty, isLoggedIn } =
-    useCart();
+  const {
+    items,
+    total,
+    removeItem,
+    increaseQty,
+    decreaseQty,
+    isLoggedIn,
+    clearCart,
+  } = useCart();
   const router = useRouter();
   if (items.length === 0) {
     return (
@@ -114,6 +121,13 @@ export default function CartPage() {
           </span>
         </button>
       )}
+
+      <button
+        onClick={clearCart}
+        className="mt-4 w-full bg-primary hover:bg-purple-500 hover:cursor-pointer text-primary-foreground rounded-xl py-3 font-medium hover:opacity-90 transition"
+      >
+        Clear Cart
+      </button>
     </div>
   );
 }

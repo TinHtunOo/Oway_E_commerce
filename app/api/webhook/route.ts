@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
         break;
       }
       console.log("✅ payment_intent.succeeded fired");
-
       console.log("orderId", orderId);
       console.log("userId", userId);
 
@@ -46,15 +45,16 @@ export async function POST(req: NextRequest) {
       const { data, error: orderError } = await supabase
         .from("orders")
         .update({
-          status: "confirmed", // OrderStatus: pending → confirmed
+          status: "confirmed",
           updated_at: new Date().toISOString(),
         })
         .eq("id", orderId)
         .eq("user_id", userId)
-        .select(); // ✅ add select to see what was updated
+        .select();
 
       console.log("DB update result:", data);
-      console.log("DB update error:", orderError); // safety check — must belong to this user
+      console.log("DB update error:", orderError);
+
       if (orderError) {
         console.error("Failed to update order:", orderError);
         return NextResponse.json(
@@ -90,7 +90,21 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      console.log(`✅ Order ${orderId} confirmed, stock updated.`);
+      // 4. ✅ Clear the cart from DB
+      const { error: cartError } = await supabase
+        .from("carts")
+        .delete()
+        .eq("user_id", userId);
+
+      if (cartError) {
+        console.error("Failed to clear cart:", cartError);
+      } else {
+        console.log(`🛒 Cart cleared for user ${userId}`);
+      }
+
+      console.log(
+        `✅ Order ${orderId} confirmed, stock updated, cart cleared.`,
+      );
       break;
     }
 

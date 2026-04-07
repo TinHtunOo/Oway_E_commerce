@@ -4,28 +4,39 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/checkout-form";
 import { useCart } from "@/hooks/useCart";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
 );
 
-// Replace with your real cart state/context
-
 export default function CheckoutPage() {
-  const { items, total, isLoggedIn } = useCart();
+  const { items, total } = useCart();
   const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/login");
-      return;
-    }
-    if (items.length === 0) {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      if (!data.user) {
+        router.replace("/login");
+        return;
+      }
+
+      setAuthChecked(true);
+    };
+
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (authChecked && items.length === 0) {
       router.replace("/cart");
     }
-  }, [isLoggedIn, items]);
+  }, [authChecked, items]);
 
   const cartItems = items.map((item) => ({
     id: item.product_id,
@@ -34,12 +45,16 @@ export default function CheckoutPage() {
     price: item.product?.price ?? 0,
   }));
 
+  if (!authChecked || items.length === 0 || total <= 0) {
+    return null; // or a loading spinner
+  }
+
   return (
     <Elements
       stripe={stripePromise}
       options={{
         mode: "payment",
-        amount: Math.round(total * 100), // in cents
+        amount: Math.round(total * 100),
         currency: "usd",
       }}
     >
