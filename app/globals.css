@@ -1,26 +1,37 @@
-@import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @import "tailwindcss";
+@import "swiper/css";
+@import "swiper/css/effect-fade";
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
+  --font-newsreader: "Newsreader", serif;
+  --font-playfair: "Playfair Display", serif;
+  --font-funnel-sans: "Funnel Sans", sans-serif;
+  --color-background: #ffffff;
+  --color-foreground: #171717;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Base (Adidas style) */
+
+  --color-foreground-secondary: #4a4a4a;
+  --color-foreground-muted: #9ca3af;
+
+  /* Surfaces */
+  --color-surface: #f5f5f5;
+  --color-surface-dark: #000000;
+
+  /* Accent (your touch) */
+  --color-accent-gold: #b8960c;
+  --color-accent-gold-light: #d4af37;
+
+  /* Inverse */
+  --color-foreground-inverse: #ffffff;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: "Funnel Sans", sans-serif;
 }

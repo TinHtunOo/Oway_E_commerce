@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import Navbar from "@/components/navbar";
 import { Providers } from "./provider";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+import { Newsreader, Funnel_Sans, Playfair_Display } from "next/font/google";
+
+const newsreader = Newsreader({
   subsets: ["latin"],
+  variable: "--font-newsreader",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const funnelSans = Funnel_Sans({
   subsets: ["latin"],
+  variable: "--font-funnel-sans",
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-fairplay-display",
 });
 
 export const metadata: Metadata = {
@@ -25,10 +31,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${newsreader.variable} ${funnelSans.variable} ${playfairDisplay.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="mt-[76px]  ">
         <Providers>
           <Navbar />
           {children}

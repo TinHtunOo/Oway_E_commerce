@@ -1,10 +1,9 @@
-import Image from "next/image";
+import HeroSlider from "@/components/hero-slider";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans ">
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <Image src="/peacock.svg" height={100} width={100} alt="logo" />
+    <div className="bg-background  h-[3000px]  ">
+      <HeroSlider />
     </div>
   );
 }
