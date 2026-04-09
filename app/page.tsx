@@ -1,9 +1,11 @@
-import HeroSlider from "@/components/hero-slider";
+import CollectionSection from "@/components/home/collection-section";
+import HeroSlider from "@/components/home/hero-slider";
 
 export default function Home() {
   return (
-    <div className="bg-background  h-[3000px]  ">
+    <div className="bg-background    ">
       <HeroSlider />
+      <CollectionSection />
     </div>
   );
 }

@@ -8,8 +8,7 @@ import type { Swiper as SwiperType } from "swiper";
 const slides = [
   {
     id: 1,
-    image:
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80",
+    image: "./home/hero_slide_1.png",
     overlayText: "TRADITION WOVEN INTO EVERY THREAD",
     title: "MYANMAR HERITAGE TEXTILES",
     paragraph:
@@ -17,8 +16,7 @@ const slides = [
   },
   {
     id: 2,
-    image:
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80",
+    image: "./home/hero_slide_2.png",
     overlayText: "SILK THAT SPEAKS OF ROYALTY",
     title: "MANDALAY SILK COLLECTION",
     paragraph:
@@ -26,8 +24,7 @@ const slides = [
   },
   {
     id: 3,
-    image:
-      "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1600&q=80",
+    image: "./home/hero_slide_3.png",
     overlayText: "WAVES OF ANCIENT ARTISTRY",
     title: "THE ART OF ACHEIK",
     paragraph:
@@ -35,8 +32,7 @@ const slides = [
   },
   {
     id: 4,
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80",
+    image: "./home/hero_slide_4.png",
     overlayText: "THREADS OF GOLD AND GLORY",
     title: "GOLDEN PASO COLLECTION",
     paragraph:
@@ -57,7 +53,7 @@ export default function HeroSlider() {
   }, []);
 
   return (
-    <section className="relative w-full h-[650px]  sm:h-[700px]  overflow-hidden bg-black ">
+    <section className="relative w-full h-[550px] sm:h-[650px]  overflow-hidden bg-black ">
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
