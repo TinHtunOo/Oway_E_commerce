@@ -4,6 +4,7 @@ import { Providers } from "./provider";
 import "./globals.css";
 
 import { Newsreader, Funnel_Sans, Playfair_Display } from "next/font/google";
+import Footer from "@/components/footer";
 
 const newsreader = Newsreader({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>
