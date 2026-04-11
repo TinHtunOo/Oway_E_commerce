@@ -100,7 +100,7 @@ export default function Navbar() {
       />
 
       <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white transition-transform duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50  bg-white transition-transform duration-500 ${
           visible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -116,7 +116,7 @@ export default function Navbar() {
 
         <div className="mx-auto grid grid-cols-2 lg:grid-cols-5 h-19 max-w-360 gap-4 px-2 sm:px-6 lg:px-15">
           {/* Logo */}
-          <Link href="/" className="flex items-center lg:col-span-2">
+          <Link href="/" className="flex items-center lg:col-span-2 -ml-6">
             <Image
               src="/peacock.svg"
               alt="Oway logo"

@@ -53,7 +53,7 @@ export default function HeroSlider() {
   }, []);
 
   return (
-    <section className="relative w-full h-[550px] sm:h-[650px]  overflow-hidden bg-black ">
+    <section className="relative w-full h-[calc(100vh-76px)]  overflow-hidden bg-black ">
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
