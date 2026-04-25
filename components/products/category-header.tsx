@@ -1,10 +1,12 @@
 // components/CategoryHeader.tsx
 
+import Link from "next/link";
+
 type Props = {
   navigation: string;
   title: string;
   description: string;
-  productCount: number;
+  productCount: number | undefined;
 };
 
 export default function CategoryHeader({
@@ -19,13 +21,16 @@ export default function CategoryHeader({
         {/* Breadcrumb */}
         <nav className="text-[12px] font-regular text-foreground-muted mb-4">
           <span>
-            Home / <span className="text-foreground">{navigation}</span>
+            <Link className="hover:text-foreground" href={"/"}>
+              Home
+            </Link>{" "}
+            / <span className="text-foreground">{navigation}</span>
           </span>
         </nav>
 
         {/* Content */}
         <div className="max-w-3xl">
-          <h1 className="h1 mb-3 font-bold text-[64px] tracking-[4px] font-playfair">
+          <h1 className=" mb-3 font-bold text-[40px] sm:text-[64px] tracking-[4px] font-playfair">
             {title}
           </h1>
 

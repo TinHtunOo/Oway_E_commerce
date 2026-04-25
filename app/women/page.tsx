@@ -45,7 +45,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   `,
     )
     .eq("is_active", true)
-    .eq("audience", "men")
+    .eq("audience", "women")
     .order("name", { ascending: true });
 
   if (category) {
@@ -53,6 +53,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   }
 
   const { data: productsdata, error } = await query;
+
   const products = productsdata as ProductCard;
   const categories = categoriesdata as Category;
 
@@ -63,9 +64,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   return (
     <main>
       <CategoryHeader
-        navigation="Men"
-        title="MEN'S COLLECTION"
-        description="Discover our curated selection of traditional Myanmar garments for men — from everyday longyi to ceremonial paso."
+        navigation="Women"
+        title="Women's Collection"
+        description="Elegant htamein, silk garments, and traditional accessories for every occasion."
         productCount={products?.length}
       />{" "}
       <ShopFilterBar
@@ -80,11 +81,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             product.product_images?.[0];
           return (
             <Link
-              href={`/men/${product.slug}`}
+              href={`/women/${product.slug}`}
               key={product.id}
               className="mb-10 border border-white hover:border-surface-dark p-px"
             >
-              <div className="relative w-full  aspect-[13/20] mb-3">
+              <div className="relative w-full  aspect-[13/20] mb-3 ">
                 {primaryImage ? (
                   //   <img
                   //     src={primaryImage.url}
@@ -118,12 +119,12 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       <CategoryNavigation
         categories={[
           {
-            title: "Women's Collection",
+            title: "Men's Collection",
 
             description:
-              "Elegant htamein, silk garments, and traditional accessories for every occasion.",
-            href: "/women",
-            navigation: "Women",
+              "Discover our curated selection of traditional Myanmar garments for men — from everyday longyi to ceremonial paso.",
+            href: "/men",
+            navigation: "Men",
           },
           {
             title: "Kid's Collection",

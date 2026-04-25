@@ -36,7 +36,7 @@ export default function CategoryNavigation({ categories }: Props) {
 
               <Link
                 href={cat.href}
-                className="inline-flex items-center gap-1 text-[13px] font-medium text-accent-gold "
+                className="inline-flex items-center gap-1 text-[13px] font-medium text-accent-gold hover:text-accent-gold-light "
               >
                 Shop {cat.navigation}
                 <svg
