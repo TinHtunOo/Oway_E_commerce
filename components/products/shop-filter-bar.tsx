@@ -1,29 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Category } from "@/types";
 
-type Props = {
-  categories: string[];
-  // onSortChange?: (value: string) => void;
-  // onCategoryChange?: (value: string) => void;
-};
+interface Props {
+  categories: Category;
+}
 
-export default function ShopFilterBar({
-  categories,
-  // onSortChange,
-  // onCategoryChange,
-}: Props) {
+function toTitleCase(str: string) {
+  return str
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export default function ShopFilterBar({ categories }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const [selectedSort, setSelectedSort] = useState("Sort by");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const selectedSort = searchParams.get("sort") ?? "Sort by";
+  const selectedCategory = searchParams.get("category") ?? "All Categories";
 
   const sortOptions = [
     { label: "Price: Low to High", value: "price-asc" },
     { label: "Price: High to Low", value: "price-desc" },
   ];
+
+  // const updateParam = (key: string, value: string | null) => {
+  //   const params = new URLSearchParams(searchParams.toString());
+  //   if (value === null) {
+  //     params.delete(key);
+  //   } else {
+  //     params.set(key, value);
+  //   }
+  //   router.push(`${pathname}?${params.toString()}`);
+  // };
+  const updateParam = (key: string, value: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === null) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false }); // 👈
+  };
 
   return (
     <div className="w-full bg-surface-warm">
@@ -32,21 +58,24 @@ export default function ShopFilterBar({
         <div className="relative">
           <button
             onClick={() => setSortOpen((prev) => !prev)}
-            className="flex items-center gap-2 border  px-4 py-2 text-sm hover:bg-gray-50"
+            className="flex items-center gap-2 border px-4 py-2 text-sm hover:bg-gray-50"
           >
-            {selectedSort}
+            {selectedSort === "price-asc"
+              ? "Price: Low to High"
+              : selectedSort === "price-desc"
+                ? "Price: High to Low"
+                : "Sort by"}
             <ChevronDown size={16} />
           </button>
 
           {sortOpen && (
-            <div className="absolute mt-2 w-48 bg-white border  shadow-md z-10">
+            <div className="absolute mt-2 w-48 bg-white border shadow-md z-10">
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => {
-                    setSelectedSort(option.label);
+                    updateParam("sort", option.value);
                     setSortOpen(false);
-                    // onSortChange?.(option.value);
                   }}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                 >
@@ -61,19 +90,18 @@ export default function ShopFilterBar({
         <div className="relative">
           <button
             onClick={() => setFilterOpen((prev) => !prev)}
-            className="flex items-center gap-2 border border-stroke px-4 py-2  text-sm hover:bg-gray-50"
+            className="flex items-center gap-2 border border-stroke px-4 py-2 text-sm hover:bg-gray-50"
           >
-            {selectedCategory}
+            {toTitleCase(selectedCategory)}
             <ChevronDown size={16} />
           </button>
 
           {filterOpen && (
-            <div className="absolute right-0 mt-2 w-56 bg-white border border-stroke  shadow-md z-10 max-h-60 overflow-y-auto">
+            <div className="absolute right-0 mt-2 w-56 bg-white border border-stroke shadow-md z-10 max-h-60 overflow-y-auto">
               <button
                 onClick={() => {
-                  setSelectedCategory("All Categories");
+                  updateParam("category", null);
                   setFilterOpen(false);
-                  // onCategoryChange?.("all");
                 }}
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               >
@@ -82,15 +110,14 @@ export default function ShopFilterBar({
 
               {categories.map((cat) => (
                 <button
-                  key={cat}
+                  key={cat.slug}
                   onClick={() => {
-                    setSelectedCategory(cat);
+                    updateParam("category", cat.slug);
                     setFilterOpen(false);
-                    // onCategoryChange?.(cat);
                   }}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                 >
-                  {cat}
+                  {cat.name}
                 </button>
               ))}
             </div>

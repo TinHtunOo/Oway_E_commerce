@@ -215,7 +215,7 @@ export default function Navbar() {
         {/* Mobile Drawer */}
         <div
           className={`lg:hidden border-b border-black/10 bg-white transition-all ${
-            menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            menuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 hidden"
           }`}
         >
           <div className="px-8 pb-5 pt-2">

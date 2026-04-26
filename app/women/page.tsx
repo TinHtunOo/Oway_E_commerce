@@ -1,6 +1,7 @@
 import CategoryHeader from "@/components/products/category-header";
 import CategoryNavigation from "@/components/products/category-navigation-section";
 import ShopFilterBar from "@/components/products/shop-filter-bar";
+import { getWomenCategoryIds } from "@/lib/cached-categories";
 import { supabase } from "@/lib/supabase/client";
 import { Category, ProductCard } from "@/types";
 import Image from "next/image";
@@ -8,6 +9,7 @@ import Link from "next/link";
 
 interface PageProps {
   searchParams: {
+    sort?: string;
     category?: string;
   };
 }
@@ -19,40 +21,51 @@ export function formatPrice(value: number): string {
 export default async function ProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const category = params.category;
-  const { data: categoriesdata } = await supabase
-    .from("categories")
-    .select("name, slug");
+  const sort = params.sort;
 
   let query = supabase
     .from("products")
     .select(
       `
-    id,
-    name,
-    slug,
-    price,
-    stock,
-    description,
-    product_images (
-      url,
-      is_primary
-    ),
-    categories!inner (
       id,
       name,
-      slug
-    )
-  `,
+      slug,
+      price,
+      stock,
+      description,
+      product_images (
+        url,
+        is_primary
+      ),
+      categories!inner (
+        id,
+        name,
+        slug
+      )
+    `,
     )
     .eq("is_active", true)
-    .eq("audience", "women")
-    .order("name", { ascending: true });
+    .eq("audience", "women");
+
+  if (sort === "price-asc") {
+    query = query.order("price", { ascending: true });
+  } else if (sort === "price-desc") {
+    query = query.order("price", { ascending: false });
+  } else {
+    query = query.order("name", { ascending: true });
+  }
 
   if (category) {
     query = query.eq("categories.slug", category);
   }
 
   const { data: productsdata, error } = await query;
+  const categoryIds = await getWomenCategoryIds();
+
+  const { data: categoriesdata } = await supabase
+    .from("categories")
+    .select("name, slug")
+    .in("id", categoryIds);
 
   const products = productsdata as ProductCard;
   const categories = categoriesdata as Category;
@@ -69,11 +82,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         description="Elegant htamein, silk garments, and traditional accessories for every occasion."
         productCount={products?.length}
       />{" "}
-      <ShopFilterBar
-        categories={["Men", "Women", "Shoes", "Accessories"]}
-        // onSortChange={(val) => console.log(val)}
-        // onCategoryChange={(val) => console.log(val)}
-      />
+      <ShopFilterBar categories={categories} />
       <div className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 gap-6 max-w-360 px-6 sm:px-10 md:px-16 mx-auto  py-10 md:py-14">
         {products?.map((product) => {
           const primaryImage =
