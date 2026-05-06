@@ -95,6 +95,26 @@ export type ProductDetail = {
   };
 } | null;
 
+export type ProductResult =
+  | {
+      id: string;
+      name: string;
+      slug: string;
+      price: number;
+      stock: number;
+      description: string;
+      product_images: {
+        url: string;
+        is_primary: boolean;
+      }[];
+      categories: {
+        id: string;
+        name: string;
+        slug: string;
+      };
+    }[]
+  | null;
+
 // =====================
 // PRODUCT IMAGE
 // =====================

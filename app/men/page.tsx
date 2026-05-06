@@ -97,11 +97,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             >
               <div className="relative w-full  aspect-[13/20] mb-3">
                 {primaryImage ? (
-                  //   <img
-                  //     src={primaryImage.url}
-                  //     alt={product.name}
-                  //     className=" object-cover border border-gray-100"
-                  //   />
                   <Image
                     src={primaryImage.url}
                     alt={product.name}

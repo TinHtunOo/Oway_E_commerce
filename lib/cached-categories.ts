@@ -42,3 +42,17 @@ export const getKidCategoryIds = unstable_cache(
   ["kid-category-ids"], // cache key
   { revalidate: 3600 }, // revalidate every 1 hour
 );
+
+export const getSearchCategoryIds = unstable_cache(
+  async (query: string) => {
+    const { data } = await supabase
+      .from("products")
+      .select("categories!inner(id)")
+      .eq("is_active", true)
+      .ilike("name", `%${query}%`);
+
+    return [...new Set(data?.map((p: any) => p.categories.id) ?? [])];
+  },
+  ["search-category-ids"],
+  { revalidate: 3600 },
+);
