@@ -285,7 +285,7 @@ export default function Navbar() {
                             {product.name}
                           </p>
                           <p className="text-xs text-foreground-secondary mt-0.5">
-                            {product.price.toLocaleString()} Ks
+                            {product.price.toLocaleString()} MMK
                           </p>
                         </div>
                         <ChevronRight
@@ -421,7 +421,7 @@ export default function Navbar() {
                                   </p>
                                 </div>
                                 <p className="text-sm font-semibold text-foreground-primary whitespace-nowrap">
-                                  {product.price.toLocaleString()} Ks
+                                  {product.price.toLocaleString()} MMK
                                 </p>
                               </Link>
                             </li>
