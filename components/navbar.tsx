@@ -396,6 +396,7 @@ export default function Navbar() {
                                 onClick={() => {
                                   setSearchOpen(false);
                                   setSearchQuery("");
+                                  setSearchResults(null);
                                 }}
                                 className="flex items-center gap-3 px-4 py-3 hover:bg-[#f5f5f5] transition-colors group"
                               >
@@ -465,12 +466,12 @@ export default function Navbar() {
               )}
             </Link>
 
-            <Link
+            {/* <Link
               href="/cart"
               className="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground-secondary hover:bg-black hover:text-white transition"
             >
               <Globe size={22} />
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile */}
@@ -544,7 +545,7 @@ export default function Navbar() {
               ))}
             </nav>
 
-            <div className="flex gap-3 pt-4">
+            {/* <div className="flex gap-3 pt-4">
               {(["MM", "EN"] as Language[]).map((lang) => (
                 <button
                   key={lang}
@@ -554,7 +555,7 @@ export default function Navbar() {
                   {lang}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </header>

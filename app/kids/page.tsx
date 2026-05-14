@@ -91,7 +91,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             product.product_images?.[0];
           return (
             <Link
-              href={`/kids/${product.slug}`}
+              href={`/products/${product.slug}`}
               key={product.id}
               className="mb-10 border border-white hover:border-surface-dark p-px"
             >

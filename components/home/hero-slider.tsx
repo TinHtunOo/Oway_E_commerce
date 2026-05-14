@@ -4,6 +4,7 @@ import { useRef, useState, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
+import Link from "next/link";
 
 const slides = [
   {
@@ -104,9 +105,12 @@ export default function HeroSlider() {
             <p className="text-white/75 leading-[150%]  text-[16px] sm:text-[18px] font-newsreader mt-2 sm:mt-4 text-shadow-lg/30">
               {slides[activeIndex].paragraph}
             </p>
-            <button className="w-fit py-2.5 px-5 mt-4 sm:py-3.75 sm:mt-8 sm:px-10 text-surface-dark hover:bg-accent-gold-light hover:cursor-pointer font-medium text-[12px] sm:text-[14px] tracking-[2px] bg-accent-gold">
+            <Link
+              href="/men"
+              className="w-fit py-2.5 px-5 mt-4 sm:py-3.75 sm:mt-8 sm:px-10 text-surface-dark hover:bg-accent-gold-light hover:cursor-pointer font-medium text-[12px] sm:text-[14px] tracking-[2px] bg-accent-gold"
+            >
               Shop Collection
-            </button>
+            </Link>
           </div>
 
           {/* Pagination dots */}

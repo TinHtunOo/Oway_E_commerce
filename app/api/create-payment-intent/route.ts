@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // convert to cents
-      currency: "usd",
+      currency: "mmk",
       automatic_payment_methods: { enabled: true },
       metadata: {
         orderId, // used by webhook to find the order

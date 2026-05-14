@@ -19,7 +19,7 @@ export default function ContactSection() {
         </p>
 
         {/* Form */}
-        <form className="w-full max-w-md mt-4">
+        <div className="w-full max-w-md mt-4">
           <div className="flex items-center border border-foreground-muted overflow-hidden">
             <input
               type="email"
@@ -33,7 +33,7 @@ export default function ContactSection() {
               Subscribe
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </section>
   );

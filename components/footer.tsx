@@ -32,16 +32,16 @@ export default function Footer() {
               </h4>
               <ul className="flex flex-col gap-2 font-regular text-[14px] text-foreground-muted">
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Men</a>
+                  <Link href="men">Men</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Women</a>
+                  <Link href="women">Women</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Kids</a>
+                  <Link href="kids">Kids</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Accesories</a>
+                  <Link href="accessories">Accesories</Link>
                 </li>
               </ul>
             </div>
@@ -53,16 +53,16 @@ export default function Footer() {
               </h4>
               <ul className="flex flex-col gap-2 font-regular text-[14px] text-foreground-muted ">
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Contact</a>
+                  <Link href="contact">Contact</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">FAQs</a>
+                  <Link href="faqs">FAQs</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Shipping</a>
+                  <Link href="shipping">Shipping</Link>
                 </li>
                 <li className="hover:text-foreground-inverse">
-                  <a href="#">Returns</a>
+                  <Link href="returns">Returns</Link>
                 </li>
               </ul>
             </div>
@@ -78,15 +78,24 @@ export default function Footer() {
 
           {/* Right */}
           <div className="flex items-center gap-6 text-[12px] font-normal text-foreground-muted">
-            <a className="hover:text-foreground-inverse" href="#">
+            <Link
+              className="hover:text-foreground-inverse"
+              href="privacy-policy"
+            >
               Privacy Policy
-            </a>
-            <a className="hover:text-foreground-inverse" href="#">
+            </Link>
+            <Link
+              className="hover:text-foreground-inverse"
+              href="terms-of-services"
+            >
               Terms of Services
-            </a>
-            <a className="hover:text-foreground-inverse" href="#">
+            </Link>
+            <Link
+              className="hover:text-foreground-inverse"
+              href="cookies-preferences"
+            >
               Cookies Preferences
-            </a>
+            </Link>
           </div>
         </div>
       </div>

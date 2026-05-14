@@ -56,7 +56,7 @@ export default function AboutSection() {
           {/* Optional CTA */}
           <div className="pt-2">
             <Link
-              href="#contact"
+              href="contact"
               className="inline-flex items-center gap-2 text-accent-gold hover:text-accent-gold-light tracking-[1px]  text-[14px] font-medium transition-colors"
             >
               Discover Our Story

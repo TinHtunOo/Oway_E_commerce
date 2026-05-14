@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { OrderWithDetails, OrderStatus } from "@/types";
 import { formatPrice } from "@/app/men/page";
-import { ChevronRight, LogOut, Package, User } from "lucide-react";
+import { ChevronRight, LogOut, Package } from "lucide-react";
 import Link from "next/link";
 
 type FormData = {
