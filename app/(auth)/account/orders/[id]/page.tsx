@@ -1,4 +1,3 @@
-// app/account/orders/[id]/page.tsx
 import { OrderWithDetails, OrderStatus } from "@/types";
 import { formatPrice } from "@/app/men/page";
 import { ArrowLeft, MapPin, Package } from "lucide-react";
@@ -6,6 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Oway: Orders",
+};
 
 const STATUS_CONFIG: Record<
   OrderStatus,

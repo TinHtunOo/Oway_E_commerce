@@ -17,4 +17,3 @@ export default function Home() {
     </div>
   );
 }
-// tinHtun@1999
