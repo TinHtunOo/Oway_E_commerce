@@ -287,6 +287,9 @@ export default function CheckoutForm({ cartItems, total }: CheckoutFormProps) {
                     Payment
                   </p>
                 </div>
+                <p className="text-[13px] tracking-[2px] uppercase text-foreground-muted">
+                  Note:Use the Card Number 4242 4242 4242 4242
+                </p>
                 <div className="border border-black/10 rounded-xl p-4 bg-[#f9f9f9]">
                   <PaymentElement />
                 </div>

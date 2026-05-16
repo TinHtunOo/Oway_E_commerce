@@ -75,8 +75,9 @@ function SuccessContent() {
               Thank you!
             </h1>
             <p className="text-sm text-foreground-muted tracking-[0.5px] leading-relaxed">
-              Your order has been placed successfully. You&lsquo;ll receive a
-              confirmation email shortly.
+              Your order has been placed successfully.
+              {/* You&lsquo;ll receive a
+              confirmation email shortly. */}
             </p>
           </div>
 

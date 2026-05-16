@@ -4,7 +4,6 @@ import ShopFilterBar from "@/components/products/shop-filter-bar";
 import { getKidCategoryIds } from "@/lib/cached-categories";
 import { supabase } from "@/lib/supabase/client";
 import { Category, ProductCard } from "@/types";
-import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,9 +14,6 @@ interface PageProps {
     category?: string;
   };
 }
-export const metadata: Metadata = {
-  title: "Oway: Kids",
-};
 
 export function formatPrice(value: number): string {
   return new Intl.NumberFormat("en-US").format(value);
